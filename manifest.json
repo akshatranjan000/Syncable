@@ -1,0 +1,42 @@
+{
+    "manifest_version": 3,
+    "name": "SyncExt",
+    "version": "1.0",
+    "description": "A brief description of your extension.",
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"]
+        }
+    ],    
+    "permissions": [
+        "storage",
+        "tabs",
+        "scripting",
+        "sidePanel"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "commands": {
+        "toggle-sidepanel": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+V",
+                "mac": "Command+Shift+V"
+            },
+            "description": "Toggle SyncExt side panel"
+        }
+    },
+    "side_panel": {
+        "default_path": "popup/popup.html"
+    },
+    "action": {
+        "default_title": "Open SyncExt Side Panel"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["wave.png"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}

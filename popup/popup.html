@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            width: 350px;
+            background: rgb(39, 31, 49)
+        }
+
+        #header-container {
+            background: url('../wave.png');
+            background-size: cover;
+            height: 100px;
+            background-position: center;
+            padding: 0px 10px 0px 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        #header-banner {
+            border-radius: 5px;
+            color: white;
+        }
+
+        #create-room-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: fit-content;
+        }
+
+        .button {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            background: none;
+            color: #0f1923;
+            cursor: pointer;
+            position: relative;
+            padding: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all .15s ease;
+        }
+
+        .button::before,
+        .button::after {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: calc(50% - 5px);
+            border: 1px solid #7D8082;
+            transition: all .15s ease;
+        }
+
+        .button::before {
+            top: 0;
+            border-bottom-width: 0;
+        }
+
+        .button::after {
+            bottom: 0;
+            border-top-width: 0;
+        }
+
+        .button:active,
+        .button:focus {
+            outline: none;
+        }
+
+        .button:active::before,
+        .button:active::after {
+            right: 3px;
+            left: 3px;
+        }
+
+        .button:active::before {
+            top: 3px;
+        }
+
+        .button:active::after {
+            bottom: 3px;
+        }
+
+        .button:disabled .button_lg {
+            background-color: #4a4a4a;
+        }
+
+        .button:disabled .button_sl {
+            background-color: #7D8082;
+        }
+
+        .button:disabled::before,
+        .button:disabled::after {
+            border-color: #666;
+        }
+
+        .button:disabled:hover .button_sl {
+            width: calc(100% + 15px);
+            background-color: #7D8082;
+        }
+
+        .button:disabled:hover .button_lg::after {
+            background-color: #4a4a4a;
+        }
+
+        .button_lg {
+            position: relative;
+            display: block;
+            padding: 6px 12px;
+            color: #fff;
+            background-color: #0f1923;
+            overflow: hidden;
+            box-shadow: inset 0px 0px 0px 1px transparent;
+        }
+
+        .button_lg::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background-color: #0f1923;
+        }
+
+        .button_lg::after {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 4px;
+            height: 4px;
+            background-color: #0f1923;
+            transition: all .2s ease;
+        }
+
+        .button_sl {
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: -1px;
+            left: -8px;
+            width: 0;
+            background-color: #ff4655;
+            transform: skew(-15deg);
+            transition: all .2s ease;
+        }
+
+        .button_text {
+            position: relative;
+        }
+
+        .button:hover {
+            color: #0f1923;
+        }
+
+        .button:hover .button_sl {
+            width: calc(100% + 15px);
+        }
+
+        .button :disabled .button_sl {
+            background-color: #7D8082;
+        }
+
+        .button:hover .button_lg::after {
+            background-color: #fff;
+        }
+
+        #roomInput {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            background: none;
+            color: #fff;
+            cursor: text;
+            position: relative;
+            padding: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all .15s ease;
+            width: calc(100% - 16px);
+        }
+
+        #roomInput::before,
+        #roomInput::after {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: calc(50% - 5px);
+            border: 1px solid #7D8082;
+            transition: all .15s ease;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 8px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-wrapper::before,
+        .input-wrapper::after {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: calc(50% - 5px);
+            border: 1px solid #7D8082;
+            transition: all .15s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .input-wrapper::before {
+            top: 0;
+            border-bottom-width: 0;
+        }
+
+        .input-wrapper::after {
+            bottom: 0;
+            border-top-width: 0;
+        }
+
+        .input_lg {
+            position: relative;
+            display: block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #0f1923;
+            overflow: hidden;
+            box-shadow: inset 0px 0px 0px 1px transparent;
+            border: none;
+            flex: 1;
+            font-size: 14px;
+            text-transform: none;
+        }
+
+        .input_lg:focus {
+            outline: none;
+            box-shadow: inset 0px 0px 0px 2px #45328a;
+        }
+
+        .input_lg::placeholder {
+            color: #7D8082;
+        }
+
+        /* From Uiverse.io by eslam-hany */
+        .input-container {
+            position: relative;
+        }
+
+        .input {
+            padding: 10px;
+            height: 40px;
+            border: 2px solid #0B2447;
+            border-top: none;
+            border-bottom: none;
+            font-size: 16px;
+            background: transparent;
+            outline: none;
+            box-shadow: 7px 7px 0px 0px #0B2447;
+            transition: all 0.5s;
+            background-color: #fff;
+        }
+
+        .input:focus {
+            box-shadow: none;
+            transition: all 0.5s;
+        }
+
+        .label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #0B2447;
+            transition: all 0.5s;
+            transform: scale(0);
+            z-index: -1;
+        }
+
+        .input-container .topline {
+            position: absolute;
+            content: "";
+            background-color: #0B2447;
+            width: 0%;
+            height: 2px;
+            right: 0;
+            top: 0;
+            transition: all 0.5s;
+        }
+
+        .input-container input[type="text"]:focus~.topline {
+            width: 35%;
+            transition: all 0.5s;
+        }
+
+        .input-container .underline {
+            position: absolute;
+            content: "";
+            background-color: #0B2447;
+            width: 0%;
+            height: 2px;
+            right: 0;
+            bottom: 0;
+            transition: all 0.5s;
+        }
+
+        .input-container input[type="text"]:focus~.underline {
+            width: 100%;
+            transition: all 0.5s;
+        }
+
+        .input-container input[type="text"]:focus~.label {
+            top: -10px;
+            transform: scale(1);
+            transition: all 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header-container">
+        <div id="header-banner">
+            <h3 style="font-size: larger;">SyncExt</h3>
+        </div>
+        <div id="create-room-button">
+            <button class="button" id="createRoomBtn">
+                <span class="button_lg">
+                    <span class="button_sl"></span>
+                    <span class="button_text">Create Room</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <div class="input-wrapper">
+        <input type="text" class="input_lg" id="roomInput" placeholder="ENTER ROOM ID">
+        <button class="button" id="joinBtn">
+            <span class="button_lg">
+                <span class="button_sl"></span>
+                <span class="button_text">Join Room</span>
+            </span>
+        </button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
