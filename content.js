@@ -1,3 +1,5 @@
+const { url } = require("inspector");
+
 let video;
 
 function findVideo() {
@@ -31,17 +33,52 @@ function attachListeners() {
     });
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+let applyingRemoteAction = false;
+
+function send(type) {
+    if (applyingRemoteAction) return;
+    chrome.runtime.sendMessage({
+        type,
+        roomId: null,
+        currentTime: video.currentTime,
+        playbackRate: video.playbackRate,
+        url: window.location.href
+    });
+    console.log(`Sent message of type: ${type}`);
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+    applyingRemoteAction = true;
     if (!video) return;
 
-    if (message.type === 'play') {
+    if(msg.type === 'sync-state') {
+        const { url, time, isPlaying, playbackRate } = msg.state;
+
+        if( window.location.href !== url ) {
+            console.log('Syncing video URL to:', url);
+            window.location.href = url;
+            return;
+        }
+
+        video.currentTime = time;
+        video.playbackRate = playbackRate;
+
+        isPlaying ? video.play() : video.pause();
+    }
+    
+    if (msg.type === 'play') {
         console.log('Received play command');
         video.play();
-    } else if (message.type === 'pause') {
+    } else if (msg.type === 'pause') {
         console.log('Received pause command');
         video.pause();
-    } else if (message.type === 'seek') {
-        console.log('Received seek command to:', message.time);
-        video.currentTime = message.time;
+    } else if (msg.type === 'seek') {
+        console.log('Received seek command to:', msg.time);
+        video.currentTime = msg.time;
     }
 });
+
+
+video.addEventListener('play', () => { send('play'); });
+video.addEventListener('pause', () => { send('pause'); });
+video.addEventListener('seeked', () => { send('seek'); });

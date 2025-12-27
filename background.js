@@ -4,9 +4,19 @@ let roomId = null;
 chrome.storage.local.onChanged.addListener(
     async (changes) => {
         if (changes.roomId) {
-            roomId = changes.roomId.newValue;
-            console.log('Room ID updated to:', roomId);
-            initializeSocket();
+            if (changes.roomId.newValue) {
+                roomId = changes.roomId.newValue;
+                console.log('Room ID updated to:', roomId);
+                initializeSocket();
+            } else {
+                // Room was removed
+                console.log('Room ID removed, closing connection');
+                roomId = null;
+                if (socket) {
+                    socket.close();
+                    socket = null;
+                }
+            }
         }
     }
 );
@@ -32,7 +42,7 @@ function initializeSocket() {
         socket.close();
     }
 
-    socket = new WebSocket('wss://your-websocket-server.com');
+    socket = new WebSocket('wss://sync-server-old-violet-1509.fly.dev');
 
     socket.onopen = () => {
         console.log('WebSocket connection established');
@@ -52,6 +62,25 @@ function initializeSocket() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender) => {
+    // Handle room join/exit messages from popup
+    if (message.type === 'joinRoom') {
+        roomId = message.roomId;
+        console.log('Received joinRoom message for:', roomId);
+        initializeSocket();
+        return;
+    }
+    
+    if (message.type === 'exitRoom') {
+        console.log('Received exitRoom message');
+        roomId = null;
+        if (socket) {
+            socket.close();
+            socket = null;
+        }
+        return;
+    }
+    
+    // Forward video control messages to WebSocket
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify(message));
     }

@@ -28,6 +28,8 @@ createRoomBtn.addEventListener('click', function() {
     
     chrome.storage.local.set({ roomId }, () => {
         console.log('Room ID saved:', roomId);
+        // Notify background script to join the room
+        chrome.runtime.sendMessage({ type: 'joinRoom', roomId });
     });
 });
 
@@ -39,6 +41,8 @@ joinBtn.addEventListener('click', function() {
         joinBtnText.textContent = 'Join Room';
         chrome.storage.local.remove('roomId', () => {
             console.log('Room exited');
+            // Notify background script to exit the room
+            chrome.runtime.sendMessage({ type: 'exitRoom' });
         });
     } else {
         // Join room functionality
@@ -49,6 +53,8 @@ joinBtn.addEventListener('click', function() {
             joinBtnText.textContent = 'Exit Room';
             chrome.storage.local.set({ roomId }, () => {
                 console.log('Room ID saved:', roomId);
+                // Notify background script to join the room
+                chrome.runtime.sendMessage({ type: 'joinRoom', roomId });
             });
         }
     }
