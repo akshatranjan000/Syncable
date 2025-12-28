@@ -42,7 +42,7 @@ function initializeSocket() {
         socket.close();
     }
 
-    socket = new WebSocket('wss://sync-server-old-violet-1509.fly.dev');
+    socket = new WebSocket('wss//sync-server-old-violet-1509.fly.dev');
 
     socket.onopen = () => {
         console.log('WebSocket connection established');

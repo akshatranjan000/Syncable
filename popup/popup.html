@@ -6,364 +6,576 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            width: 350px;
-            background: rgb(39, 31, 49)
-        }
-
-        #header-container {
-            background: url('../wave.png');
-            background-size: cover;
-            height: 100px;
-            background-position: center;
-            padding: 0px 10px 0px 20px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
+        @font-face {
+            font-family: 'Magnolia Script';
+            src: url('/fonts/Magnolia\ Script.otf') format('opentype');
         }
 
         #header-banner {
-            border-radius: 5px;
-            color: white;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            background-color: #fff;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: rgb(83, 83, 83) 1px solid;
         }
 
-        #create-room-button {
+        
+
+        #avatarPicker {
+            position: relative;
+            display: inline-block;
+        }
+
+        #currentAvatar {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        #currentAvatar:hover {
+            transform: scale(1.1);
+        }
+
+        #avatarOptions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            margin-top: 4px;
+            z-index: 1000;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+        }
+
+        #avatarOptions.show {
+            display: grid;
+        }
+
+        .avatar-option {
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: fit-content;
         }
 
-        .button {
-            -moz-appearance: none;
-            -webkit-appearance: none;
-            appearance: none;
-            border: none;
-            background: none;
-            color: #0f1923;
-            cursor: pointer;
-            position: relative;
-            padding: 4px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 12px;
-            transition: all .15s ease;
+        .avatar-option:hover {
+            background: #f0f0f0;
+            transform: scale(1.15);
         }
 
-        .button::before,
-        .button::after {
-            content: '';
-            display: block;
-            position: absolute;
-            right: 0;
-            left: 0;
-            height: calc(50% - 5px);
-            border: 1px solid #7D8082;
-            transition: all .15s ease;
+        .avatar-option img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        .button::before {
-            top: 0;
-            border-bottom-width: 0;
+        body {
+            width: 100%;
+            margin: 0px;
+            /* border: 1px black solid; */
+            background-color: #ddd;
         }
-
-        .button::after {
-            bottom: 0;
-            border-top-width: 0;
-        }
-
-        .button:active,
-        .button:focus {
-            outline: none;
-        }
-
-        .button:active::before,
-        .button:active::after {
-            right: 3px;
-            left: 3px;
-        }
-
-        .button:active::before {
-            top: 3px;
-        }
-
-        .button:active::after {
-            bottom: 3px;
-        }
-
-        .button:disabled .button_lg {
-            background-color: #4a4a4a;
-        }
-
-        .button:disabled .button_sl {
-            background-color: #7D8082;
-        }
-
-        .button:disabled::before,
-        .button:disabled::after {
-            border-color: #666;
-        }
-
-        .button:disabled:hover .button_sl {
-            width: calc(100% + 15px);
-            background-color: #7D8082;
-        }
-
-        .button:disabled:hover .button_lg::after {
-            background-color: #4a4a4a;
-        }
-
-        .button_lg {
-            position: relative;
-            display: block;
-            padding: 6px 12px;
-            color: #fff;
-            background-color: #0f1923;
-            overflow: hidden;
-            box-shadow: inset 0px 0px 0px 1px transparent;
-        }
-
-        .button_lg::before {
-            content: '';
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 2px;
-            height: 2px;
-            background-color: #0f1923;
-        }
-
-        .button_lg::after {
-            content: '';
-            display: block;
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 4px;
-            height: 4px;
-            background-color: #0f1923;
-            transition: all .2s ease;
-        }
-
-        .button_sl {
-            display: block;
-            position: absolute;
-            top: 0;
-            bottom: -1px;
-            left: -8px;
-            width: 0;
-            background-color: #ff4655;
-            transform: skew(-15deg);
-            transition: all .2s ease;
-        }
-
-        .button_text {
-            position: relative;
-        }
-
-        .button:hover {
-            color: #0f1923;
-        }
-
-        .button:hover .button_sl {
-            width: calc(100% + 15px);
-        }
-
-        .button :disabled .button_sl {
-            background-color: #7D8082;
-        }
-
-        .button:hover .button_lg::after {
-            background-color: #fff;
-        }
-
-        #roomInput {
-            -moz-appearance: none;
-            -webkit-appearance: none;
-            appearance: none;
-            border: none;
-            background: none;
-            color: #fff;
-            cursor: text;
-            position: relative;
-            padding: 8px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 14px;
-            transition: all .15s ease;
-            width: calc(100% - 16px);
-        }
-
-        #roomInput::before,
-        #roomInput::after {
-            content: '';
-            display: block;
-            position: absolute;
-            right: 0;
-            left: 0;
-            height: calc(50% - 5px);
-            border: 1px solid #7D8082;
-            transition: all .15s ease;
-        }
-
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-            padding: 8px;
+        #room-container {
             display: flex;
-            flex-direction: row;
-            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 8px;
+            height: max-content
+        }
+        #roomInput {
+            transition: opacity 0.5s ease, width 0.5s ease, margin 0.5s ease, padding 0.5s ease;
+            width: 0;
+            opacity: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            font-size: 11px;
+        }
+        #roomInput.visible {
+            opacity: 1;
+            width: 120px;
+            padding: 6px 10px;
+            margin-right: 8px;
+        }
+        #button-container {
+            display: flex;
+            gap: 8px;
+            position: relative;
+            overflow: visible;
+            align-items: center;
+        }
+        
+        .button {
+            position: relative;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-radius: 0.8em;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: ghostwhite;
+            overflow: hidden;
+            transition: transform 0.2s, opacity 0.5s ease, width 0.5s ease, margin 0.5s ease !important;
+        }
+        
+        .button span {
+            position: relative;
+            z-index: 10;
+            transition: color 0.4s;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4em 0.7em;
+        }
+        
+        .button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 100%;
+            z-index: 0;
+            background: #000;
+            left: -10%;
+            transform: skew(30deg);
+            transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+        }
+        
+        .button:hover::before {
+            transform: translate3d(100%, 0, 0);
+        }
+        
+        .button:active {
+            transform: scale(0.95);
+        }
+        
+        .button img {
+            width: 14px;
+            height: 14px;
+            margin-right: 0.4em;
+            filter: brightness(0) invert(1);
+        }
+        
+        button#createRoomBtn.leave-mode {
+            background: linear-gradient(to right, #dc3545, #c82333);
+        }
+        
+        button#createRoomBtn.leave-mode::before {
+            background: #8b0000;
+        }
+        
+        button#createRoomBtn.hidden {
+            opacity: 0 !important;
+            width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        button#joinBtn.hidden {
+            opacity: 0 !important;
+            width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        button#joinBtn.exit-mode {
+            background: linear-gradient(to right, #dc3545, #c82333);
+        }
+        
+        button#joinBtn.exit-mode::before {
+            background: #8b0000;
+        }
+        
+        button#leaveBtn {
+            background: linear-gradient(to right, #dc3545, #c82333);
+        }
+        
+        button#leaveBtn::before {
+            background: #8b0000;
+        }
+        #roomIdDisplay {
+            opacity: 0;
+            width: 0;
+            transition: opacity 0.5s ease 0.3s, width 0.5s ease 0.3s, padding 0.5s ease 0.3s;
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 6px;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #roomIdDisplay.show {
+            opacity: 1;
+            width: auto;
+            padding: 6px 12px;
+        }
+        #copyBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
+        }
+        #copyBtn img {
+            width: 14px;
+            height: 14px;
+        }
+        #copyBtn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        #copyBtn:active {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        #avatarList {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+        }
+        #avatarList.show {
+            display: flex;
+        }
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chat Box Styles */
+        #chat-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            max-height: 300px;
+            z-index: 1000;
+        }
+
+        #chat-notch {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            width: 50px;
+            height: 15px;
+            background: #fff;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        #chat-notch:hover {
+            background: #f5f5f5;
+        }
+
+        #chat-notch::after {
+            content: '';
+            width: 30px;
+            height: 3px;
+            background: #ccc;
+            border-radius: 2px;
+        }
+
+        #chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #chat-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #chat-actions {
+            display: flex;
+            gap: 8px;
             align-items: center;
         }
 
-        .input-wrapper::before,
-        .input-wrapper::after {
-            content: '';
-            display: block;
-            position: absolute;
-            right: 0;
-            left: 0;
-            height: calc(50% - 5px);
-            border: 1px solid #7D8082;
-            transition: all .15s ease;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .input-wrapper::before {
-            top: 0;
-            border-bottom-width: 0;
-        }
-
-        .input-wrapper::after {
-            bottom: 0;
-            border-top-width: 0;
-        }
-
-        .input_lg {
-            position: relative;
-            display: block;
-            padding: 10px 20px;
-            color: #fff;
-            background-color: #0f1923;
-            overflow: hidden;
-            box-shadow: inset 0px 0px 0px 1px transparent;
+        .chat-action-btn {
+            width: 32px;
+            height: 32px;
             border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .chat-action-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: #fff;
+        }
+
+        #chat-messages {
             flex: 1;
-            font-size: 14px;
-            text-transform: none;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 150px;
+            max-height: 200px;
         }
 
-        .input_lg:focus {
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .chat-message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .chat-message.received {
+            align-self: flex-start;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        #chat-input-container {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        #chat-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
             outline: none;
-            box-shadow: inset 0px 0px 0px 2px #45328a;
+            transition: border-color 0.2s ease;
         }
 
-        .input_lg::placeholder {
-            color: #7D8082;
+        #chat-input:focus {
+            border-color: #667eea;
         }
 
-        /* From Uiverse.io by eslam-hany */
-        .input-container {
-            position: relative;
+        #chat-send-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
         }
 
-        .input {
-            padding: 10px;
-            height: 40px;
-            border: 2px solid #0B2447;
-            border-top: none;
-            border-bottom: none;
-            font-size: 16px;
-            background: transparent;
-            outline: none;
-            box-shadow: 7px 7px 0px 0px #0B2447;
-            transition: all 0.5s;
-            background-color: #fff;
+        #chat-send-btn:hover {
+            transform: scale(1.1);
         }
 
-        .input:focus {
-            box-shadow: none;
-            transition: all 0.5s;
+        #chat-send-btn:active {
+            transform: scale(0.95);
         }
 
-        .label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #0B2447;
-            transition: all 0.5s;
-            transform: scale(0);
-            z-index: -1;
+        #chat-send-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: #fff;
         }
 
-        .input-container .topline {
-            position: absolute;
-            content: "";
-            background-color: #0B2447;
-            width: 0%;
-            height: 2px;
-            right: 0;
-            top: 0;
-            transition: all 0.5s;
+        /* Scrollbar styling */
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .input-container input[type="text"]:focus~.topline {
-            width: 35%;
-            transition: all 0.5s;
+        #chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
 
-        .input-container .underline {
-            position: absolute;
-            content: "";
-            background-color: #0B2447;
-            width: 0%;
-            height: 2px;
-            right: 0;
-            bottom: 0;
-            transition: all 0.5s;
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
         }
 
-        .input-container input[type="text"]:focus~.underline {
-            width: 100%;
-            transition: all 0.5s;
-        }
-
-        .input-container input[type="text"]:focus~.label {
-            top: -10px;
-            transform: scale(1);
-            transition: all 0.5s;
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
 
 <body>
-    <div id="header-container">
-        <div id="header-banner">
-            <h3 style="font-size: larger;">SyncExt</h3>
+    <div id="header-banner">
+        <img src="../assets/Couch_Connect.png" alt="Couch Connect Icon" id="app-icon"
+            style="width: 100px; padding: 15px;">
+        
+        <div id="avatarPicker" style="padding: 15px;">
+            <img id="currentAvatar" src="../assets/avatars/bear.png" alt="Avatar">
+            <div id="avatarOptions">
+                <div class="avatar-option" data-avatar="bear.png"><img src="../assets/avatars/bear.png" alt="Bear"></div>
+                <div class="avatar-option" data-avatar="cat.png"><img src="../assets/avatars/cat.png" alt="Cat"></div>
+                <div class="avatar-option" data-avatar="chicken.png"><img src="../assets/avatars/chicken.png" alt="Chicken"></div>
+                <div class="avatar-option" data-avatar="cow.png"><img src="../assets/avatars/cow.png" alt="Cow"></div>
+                <div class="avatar-option" data-avatar="dog.png"><img src="../assets/avatars/dog.png" alt="Dog"></div>
+                <div class="avatar-option" data-avatar="dragon.png"><img src="../assets/avatars/dragon.png" alt="Dragon"></div>
+                <div class="avatar-option" data-avatar="giraffe.png"><img src="../assets/avatars/giraffe.png" alt="Giraffe"></div>
+                <div class="avatar-option" data-avatar="gorilla.png"><img src="../assets/avatars/gorilla.png" alt="Gorilla"></div>
+                <div class="avatar-option" data-avatar="hippopotamus.png"><img src="../assets/avatars/hippopotamus.png" alt="Hippopotamus"></div>
+                <div class="avatar-option" data-avatar="koala.png"><img src="../assets/avatars/koala.png" alt="Koala"></div>
+                <div class="avatar-option" data-avatar="meerkat.png"><img src="../assets/avatars/meerkat.png" alt="Meerkat"></div>
+                <div class="avatar-option" data-avatar="panda.png"><img src="../assets/avatars/panda.png" alt="Panda"></div>
+                <div class="avatar-option" data-avatar="penguin.png"><img src="../assets/avatars/penguin.png" alt="Penguin"></div>
+                <div class="avatar-option" data-avatar="rabbit.png"><img src="../assets/avatars/rabbit.png" alt="Rabbit"></div>
+                <div class="avatar-option" data-avatar="sea-lion.png"><img src="../assets/avatars/sea-lion.png" alt="Sea Lion"></div>
+            </div>
         </div>
-        <div id="create-room-button">
+    </div>
+    <div id="room-container">
+        <div id="button-container">
+            <span id="roomIdDisplay">
+                <span id="roomIdText"></span>
+                <button id="copyBtn" title="Copy Room ID">
+                    <img src="../assets/copy.png" alt="Copy" width="16" height="16">
+                </button>
+            </span>
             <button class="button" id="createRoomBtn">
-                <span class="button_lg">
-                    <span class="button_sl"></span>
-                    <span class="button_text">Create Room</span>
+                <span>
+                    <img src="../assets/logout.png" alt="" id="logoutIcon" style="display: none;">
+                    <span id="createBtnText">Create Room</span>
                 </span>
             </button>
+            <input type="text" class="input_lg" id="roomInput" placeholder="ENTER ROOM ID" style="display: none;">
+            <button class="button" id="backBtn" style="display: none;">
+                <span>
+                    <span>Back</span>
+                </span>
+            </button>
+            <button class="button" id="joinBtn">
+                <span>
+                    <img src="../assets/logout.png" alt="" id="joinLogoutIcon" style="display: none;">
+                    <span id="joinBtnText">Join Room</span>
+                </span>
+            </button>
+            <button class="button" id="leaveBtn" style="display: none;">
+                <span>
+                    <img src="../assets/logout.png" alt="" style="filter: brightness(0) invert(1);">
+                    <span>Leave Room</span>
+                </span>
+            </button>
+            <div id="avatarList"></div>
         </div>
     </div>
 
-    <div class="input-wrapper">
-        <input type="text" class="input_lg" id="roomInput" placeholder="ENTER ROOM ID">
-        <button class="button" id="joinBtn">
-            <span class="button_lg">
-                <span class="button_sl"></span>
-                <span class="button_text">Join Room</span>
-            </span>
-        </button>
+    <!-- Chat Box -->
+    <div id="chat-container">
+        <div id="chat-notch"></div>
+        
+        <div id="chat-header">
+            <div id="chat-title">Chat</div>
+            <div id="chat-actions">
+                <button class="chat-action-btn" id="voiceCallBtn" title="Voice Call">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                    </svg>
+                </button>
+                <button class="chat-action-btn" id="videoCallBtn" title="Video Call">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="chat-messages">
+            <!-- Messages will be dynamically added here -->
+        </div>
+
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Type a message...">
+            <button id="chat-send-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <script src="popup.js"></script>

@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "SyncExt",
+    "name": "CouchConnect",
     "version": "1.0",
     "description": "A brief description of your extension.",
     "content_scripts": [
@@ -35,7 +35,23 @@
     },
     "web_accessible_resources": [
         {
-            "resources": ["wave.png"],
+            "resources": [
+                "assets/avatars/bear.png",
+                "assets/avatars/cat.png",
+                "assets/avatars/chicken.png",
+                "assets/avatars/cow.png",
+                "assets/avatars/dog.png",
+                "assets/avatars/dragon.png",
+                "assets/avatars/giraffe.png",
+                "assets/avatars/gorilla.png",
+                "assets/avatars/hippopotamus.png",
+                "assets/avatars/koala.png",
+                "assets/avatars/meerkat.png",
+                "assets/avatars/panda.png",
+                "assets/avatars/penguin.png",
+                "assets/avatars/rabbit.png",
+                "assets/avatars/sea-lion.png"
+            ],
             "matches": ["<all_urls>"]
         }
     ]
