@@ -6,23 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        :root {
+            --color-primary: #202124;
+            --color-secondary: #333333;
+            --color-tertiary: #FF5733;
+            --color-accent: #FF5733;
+            --color-text: #FFFFFF;
+            --color-icon: #a4a4a4;
+        }
+
         @font-face {
             font-family: 'Magnolia Script';
             src: url('/fonts/Magnolia\ Script.otf') format('opentype');
+        }
+
+        #app-icon {
+            color: var(--color-icon);
+            transition: color 0.3s;
         }
 
         #header-banner {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            background-color: #fff;
+            background-color: var(--color-primary);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-bottom: rgb(83, 83, 83) 1px solid;
+            border-bottom: var(--color-secondary) 1px solid;
         }
-
-        
 
         #avatarPicker {
             position: relative;
@@ -48,7 +60,7 @@
             position: absolute;
             top: 100%;
             right: 0;
-            background: white;
+            background: var(--color-primary);
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             padding: 8px;
@@ -86,11 +98,117 @@
             object-fit: cover;
         }
 
+        /* Theme Picker Styles */
+        #themePicker {
+            position: relative;
+            display: inline-block;
+        }
+        #currentThemeCircle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-secondary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        #currentThemeCircle:hover {
+            transform: scale(1.1);
+        }
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            width: 100%;
+            height: 100%;
+            gap: 2px;
+            z-index: 1;
+        }
+        .theme-color {
+            width: 100%;
+            height: 100%;
+            border: 1.5px solid #eee;
+        }
+        #themeOptions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--color-primary);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px 10px;
+            margin-top: 4px;
+            z-index: 1000;
+            min-width: 150px;
+            gap: 1rem;
+        }
+        #themeOptions.show {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .theme-option-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .theme-option-label {
+            font-size: 9px;
+            color: var(--color-text);
+            text-align: center;
+            user-select: none;
+            opacity: 0.8;
+        }
+        .theme-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .theme-option.selected {
+            border: 2px solid #333;
+        }
+        .theme-option:hover {
+            background: #f0f0f0;
+            transform: scale(1.10);
+        }
+        .theme-option .theme-grid {
+            width: 90%;
+            height: 90%;
+        }
+        .theme-option .theme-color {
+            width: 100%;
+            height: 100%;
+        }
+        .theme-primary {
+            border-top-left-radius: 100%;
+        }
+        .theme-secondary {
+            border-top-right-radius: 100%;
+        }
+        .theme-tertiary {
+            border-bottom-left-radius: 100%;
+        }
+        .theme-accent {
+            border-bottom-right-radius: 100%;
+        }
+
         body {
             width: 100%;
             margin: 0px;
             /* border: 1px black solid; */
-            background-color: #ddd;
+            background-color: var(--color-primary);
+            color: var(--color-text);
+            transition: background-color 0.3s, color 0.3s;
         }
         #room-container {
             display: flex;
@@ -131,7 +249,7 @@
             border-radius: 0.8em;
             cursor: pointer;
             border: none;
-            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            background: linear-gradient(to right, var(--color-tertiary), var(--color-accent));
             color: ghostwhite;
             overflow: hidden;
             transition: transform 0.2s, opacity 0.5s ease, width 0.5s ease, margin 0.5s ease !important;
@@ -222,10 +340,10 @@
             transition: opacity 0.5s ease 0.3s, width 0.5s ease 0.3s, padding 0.5s ease 0.3s;
             font-weight: bold;
             font-size: 13px;
-            color: #333;
+            color: var(--color-text);
             white-space: nowrap;
-            background-color: #fff;
-            border: 2px solid #333;
+            background-color: var(--color-secondary);
+            border: 2px solid var(--color-accent);
             border-radius: 6px;
             padding: 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -273,14 +391,14 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-accent) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--color-text);
             font-size: 11px;
             font-weight: bold;
-            border: 2px solid #fff;
+            border: 2px solid var(--color-primary);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
@@ -290,7 +408,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #fff;
+            background: var(--color-primary);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
@@ -306,7 +424,7 @@
             right: 20px;
             width: 50px;
             height: 15px;
-            background: #fff;
+            background: var(--color-primary);
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
@@ -318,14 +436,14 @@
         }
 
         #chat-notch:hover {
-            background: #f5f5f5;
+            background: var(--color-secondary);
         }
 
         #chat-notch::after {
             content: '';
             width: 30px;
             height: 3px;
-            background: #ccc;
+            background: var(--color-secondary);
             border-radius: 2px;
         }
 
@@ -334,13 +452,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--color-secondary);
         }
 
         #chat-title {
             font-size: 14px;
             font-weight: 600;
-            color: #333;
+            color: var(--color-text);
         }
 
         #chat-actions {
@@ -354,7 +472,7 @@
             height: 32px;
             border: none;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-accent) 100%);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -400,38 +518,40 @@
 
         .chat-message.sent {
             align-self: flex-end;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
+            background: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-accent) 100%);
+            color: var(--color-text);
         }
 
         .chat-message.received {
             align-self: flex-start;
-            background: #f0f0f0;
-            color: #333;
+            background: var(--color-secondary);
+            color: var(--color-text);
         }
 
         #chat-input-container {
             display: flex;
             gap: 8px;
             padding: 12px 16px;
-            border-top: 1px solid #e0e0e0;
-            background: #fafafa;
+            border-top: 1px solid var(--color-secondary);
+            background: var(--color-secondary);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
         }
 
         #chat-input {
             flex: 1;
-            border: 1px solid #ddd;
+            border: 1px solid var(--color-secondary);
             border-radius: 20px;
             padding: 8px 16px;
             font-size: 12px;
             outline: none;
+            background: var(--color-primary);
+            color: var(--color-text);
             transition: border-color 0.2s ease;
         }
 
         #chat-input:focus {
-            border-color: #667eea;
+            border-color: var(--color-accent);
         }
 
         #chat-send-btn {
@@ -439,7 +559,7 @@
             height: 36px;
             border: none;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-accent) 100%);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -484,27 +604,43 @@
 
 <body>
     <div id="header-banner">
-        <img src="../assets/Couch_Connect.png" alt="Couch Connect Icon" id="app-icon"
-            style="width: 100px; padding: 15px;">
+        <svg id="app-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 195.842" style="width: 100px; padding: 15px;" aria-label="Syncable Icon">
+            <path fill="currentColor" fill-rule="evenodd" d="M87.312 0.609 C 45.923 4.527,12.402 37.980,3.018 84.731 C -8.291 141.074,13.624 183.445,59.355 193.654 C 90.714 200.654,130.715 189.887,151.863 168.753 L 155.627 164.993 155.776 170.310 C 156.098 181.749,158.496 184.021,170.544 184.297 C 179.649 184.506,182.376 183.976,185.094 181.471 C 188.431 178.394,188.443 178.295,188.335 154.839 L 188.244 135.197 187.563 133.477 C 185.540 128.366,182.622 127.168,172.186 127.168 C 157.883 127.168,156.009 129.010,155.769 143.302 L 155.643 150.834 153.071 153.195 C 130.882 173.559,89.505 180.389,64.391 167.834 C 43.185 157.233,33.067 130.388,37.238 95.792 C 42.849 49.248,69.083 13.708,97.097 14.697 C 113.264 15.268,120.490 27.596,116.407 47.641 C 114.203 58.458,108.123 67.537,99.827 72.400 L 98.064 73.433 98.534 74.342 C 102.095 81.227,113.809 84.117,124.301 80.701 C 147.989 72.987,154.562 36.758,136.082 15.771 C 125.657 3.932,108.512 -1.398,87.312 0.609 M345.090 5.579 C 344.932 5.626,344.272 5.825,343.622 6.020 L 342.442 6.375 342.719 7.560 C 343.315 10.107,342.675 14.502,336.819 48.091 L 330.959 81.702 329.914 83.125 C 322.341 93.442,304.613 96.294,296.314 88.531 C 285.502 78.417,293.849 49.176,307.332 49.938 C 313.235 50.272,314.120 59.436,308.831 65.460 C 307.060 67.477,310.844 69.725,314.909 69.071 C 320.645 68.147,324.451 62.227,323.517 55.684 C 321.445 41.175,298.462 39.748,285.493 53.323 C 280.961 58.067,278.223 63.445,276.657 70.681 C 276.167 72.948,276.169 80.775,276.661 82.954 L 277.036 84.618 275.814 86.202 C 270.636 92.913,262.978 94.060,261.324 88.371 C 260.635 85.999,260.873 83.833,263.473 68.817 C 266.773 49.769,266.858 48.601,265.108 46.307 C 263.430 44.107,256.644 43.102,252.330 44.414 L 251.326 44.719 251.306 49.098 C 251.222 67.428,234.892 97.108,228.149 91.187 C 225.860 89.177,225.964 86.973,229.224 68.387 C 232.863 47.648,232.796 46.147,228.159 44.537 C 224.833 43.382,216.499 44.036,216.965 45.416 C 217.494 46.980,217.086 52.443,215.933 59.211 L 214.761 66.093 212.929 67.855 C 210.733 69.968,207.799 71.766,205.007 72.711 C 201.898 73.763,201.912 73.769,202.227 71.470 C 204.551 54.513,195.275 43.283,179.498 43.954 C 162.925 44.659,151.443 55.852,149.080 73.604 C 146.747 91.141,155.054 102.111,170.656 102.096 C 184.724 102.082,196.109 93.802,200.288 80.547 L 200.781 78.980 202.844 78.512 C 205.855 77.827,209.207 76.458,211.405 75.014 C 212.466 74.317,213.333 73.782,213.333 73.823 C 213.333 73.865,213.069 75.562,212.747 77.595 C 210.238 93.402,213.431 100.978,223.064 102.077 C 231.194 103.004,238.570 97.646,244.915 86.205 L 246.165 83.951 246.342 87.925 C 246.440 90.111,246.678 92.416,246.872 93.047 C 250.860 106.028,269.311 104.881,277.994 91.112 C 279.025 89.478,278.986 89.484,279.753 90.827 C 287.952 105.185,313.561 106.038,327.560 92.420 C 328.665 91.345,329.475 90.715,329.361 91.020 C 328.334 93.762,328.962 98.815,330.512 100.277 C 332.976 102.601,344.230 103.016,343.849 100.769 C 341.315 85.817,356.421 54.194,366.097 54.194 C 369.721 54.194,370.004 56.110,368.043 67.384 C 364.860 85.675,364.585 88.815,365.815 92.794 C 369.051 103.267,381.441 105.380,391.632 97.197 C 396.888 92.977,401.199 84.640,399.173 82.613 C 398.137 81.578,397.655 81.843,396.271 84.210 C 391.877 91.724,383.408 94.661,380.904 89.540 C 379.824 87.331,379.998 84.888,382.112 72.545 C 385.239 54.288,384.859 49.770,379.895 46.174 C 371.972 40.435,359.647 45.704,350.866 58.584 C 350.133 59.659,349.534 60.492,349.534 60.436 C 349.534 60.381,351.287 50.405,353.430 38.268 C 358.310 10.628,358.424 9.084,355.734 7.032 C 354.121 5.802,347.405 4.885,345.090 5.579 M182.647 50.201 C 184.780 51.169,185.893 52.524,186.751 55.197 C 187.640 57.972,187.558 58.486,186.134 59.048 C 180.650 61.211,179.922 69.774,184.812 74.593 L 186.025 75.788 185.199 78.937 C 181.932 91.387,175.900 97.900,169.338 96.063 C 165.200 94.904,163.494 90.698,163.812 82.444 C 164.628 61.318,173.536 46.069,182.647 50.201 M197.204 127.335 C 196.380 127.815,196.432 183.634,197.257 184.076 C 198.143 184.550,205.651 184.459,206.325 183.966 C 206.861 183.574,206.887 182.983,207.025 168.033 L 207.168 152.506 214.726 167.938 C 218.882 176.425,222.541 183.595,222.858 183.871 C 223.524 184.453,229.837 184.615,230.843 184.076 C 231.715 183.610,231.715 127.788,230.843 127.322 C 229.852 126.791,222.076 126.940,221.612 127.499 C 221.293 127.883,221.191 130.909,221.075 143.421 L 220.932 158.869 213.333 143.349 C 209.154 134.813,205.480 127.648,205.169 127.427 C 204.490 126.944,198.004 126.869,197.204 127.335 M240.215 127.335 C 239.390 127.815,239.442 183.634,240.268 184.076 C 241.153 184.550,248.662 184.459,249.336 183.966 C 249.872 183.574,249.898 182.983,250.036 168.023 L 250.179 152.486 257.746 167.928 C 261.907 176.421,265.567 183.595,265.878 183.871 C 266.534 184.453,272.847 184.615,273.854 184.076 C 274.541 183.708,274.747 128.052,274.065 127.369 C 273.827 127.132,272.376 127.025,269.391 127.025 C 266.405 127.025,264.954 127.132,264.717 127.369 C 264.458 127.628,264.373 131.600,264.373 143.484 C 264.373 152.400,264.265 159.136,264.124 158.982 C 263.988 158.832,260.497 151.806,256.368 143.369 C 252.238 134.932,248.594 127.803,248.269 127.527 C 247.589 126.949,241.141 126.796,240.215 127.335 M283.226 127.335 C 282.401 127.815,282.453 183.634,283.279 184.076 C 284.146 184.540,314.009 184.480,314.648 184.013 C 315.085 183.693,315.131 183.101,315.061 178.637 L 314.982 173.620 304.444 173.545 L 293.907 173.470 293.907 167.452 L 293.907 161.434 301.720 161.429 C 306.143 161.427,309.721 161.307,309.964 161.153 C 310.319 160.929,310.394 160.025,310.394 155.986 C 310.394 151.946,310.319 151.043,309.964 150.818 C 309.721 150.664,306.143 150.545,301.720 150.542 L 293.907 150.538 293.907 144.229 L 293.907 137.921 304.063 137.921 C 309.648 137.921,314.422 137.843,314.672 137.747 C 315.258 137.522,315.359 127.947,314.781 127.369 C 314.332 126.920,283.995 126.887,283.226 127.335 M333.047 127.211 C 328.612 127.873,325.692 129.989,324.232 133.597 L 323.584 135.197 323.584 155.699 L 323.584 176.201 324.245 177.836 C 326.293 182.905,329.782 184.373,339.785 184.373 C 353.352 184.373,355.865 182.096,356.070 169.620 C 356.201 161.593,356.692 162.294,350.933 162.294 C 345.458 162.294,345.806 161.930,345.806 167.641 L 345.806 172.087 344.968 172.925 L 344.130 173.763 340.075 173.763 C 333.515 173.763,334.049 175.371,334.054 155.636 C 334.060 136.282,333.623 137.524,340.358 137.698 C 345.686 137.836,345.806 137.978,345.806 144.083 C 345.806 149.352,345.542 149.104,351.154 149.104 C 356.528 149.104,356.129 149.622,356.129 142.646 C 356.129 132.781,354.560 129.528,348.933 127.724 C 347.405 127.237,335.454 126.851,333.047 127.211 M363.226 127.335 C 362.420 127.804,362.469 137.191,363.279 137.624 C 363.599 137.796,365.902 137.921,368.727 137.921 L 373.620 137.921 373.620 160.850 C 373.620 183.226,373.633 183.786,374.175 184.076 C 374.902 184.465,383.234 184.465,383.962 184.076 C 384.503 183.786,384.516 183.226,384.516 160.850 L 384.516 137.921 389.514 137.921 C 395.888 137.921,395.412 138.361,395.412 132.473 C 395.412 128.722,395.333 127.847,394.962 127.476 C 394.416 126.930,364.151 126.796,363.226 127.335 M176.637 138.067 C 178.080 138.814,178.065 138.622,178.065 155.699 C 178.065 175.305,178.558 173.767,172.272 173.759 C 165.884 173.752,166.309 175.039,166.309 155.699 C 166.309 136.359,165.884 137.646,172.272 137.639 C 174.864 137.636,176.021 137.749,176.637 138.067"/>
+        </svg>
         
-        <div id="avatarPicker" style="padding: 15px;">
-            <img id="currentAvatar" src="../assets/avatars/bear.png" alt="Avatar">
-            <div id="avatarOptions">
-                <div class="avatar-option" data-avatar="bear.png"><img src="../assets/avatars/bear.png" alt="Bear"></div>
-                <div class="avatar-option" data-avatar="cat.png"><img src="../assets/avatars/cat.png" alt="Cat"></div>
-                <div class="avatar-option" data-avatar="chicken.png"><img src="../assets/avatars/chicken.png" alt="Chicken"></div>
-                <div class="avatar-option" data-avatar="cow.png"><img src="../assets/avatars/cow.png" alt="Cow"></div>
-                <div class="avatar-option" data-avatar="dog.png"><img src="../assets/avatars/dog.png" alt="Dog"></div>
-                <div class="avatar-option" data-avatar="dragon.png"><img src="../assets/avatars/dragon.png" alt="Dragon"></div>
-                <div class="avatar-option" data-avatar="giraffe.png"><img src="../assets/avatars/giraffe.png" alt="Giraffe"></div>
-                <div class="avatar-option" data-avatar="gorilla.png"><img src="../assets/avatars/gorilla.png" alt="Gorilla"></div>
-                <div class="avatar-option" data-avatar="hippopotamus.png"><img src="../assets/avatars/hippopotamus.png" alt="Hippopotamus"></div>
-                <div class="avatar-option" data-avatar="koala.png"><img src="../assets/avatars/koala.png" alt="Koala"></div>
-                <div class="avatar-option" data-avatar="meerkat.png"><img src="../assets/avatars/meerkat.png" alt="Meerkat"></div>
-                <div class="avatar-option" data-avatar="panda.png"><img src="../assets/avatars/panda.png" alt="Panda"></div>
-                <div class="avatar-option" data-avatar="penguin.png"><img src="../assets/avatars/penguin.png" alt="Penguin"></div>
-                <div class="avatar-option" data-avatar="rabbit.png"><img src="../assets/avatars/rabbit.png" alt="Rabbit"></div>
-                <div class="avatar-option" data-avatar="sea-lion.png"><img src="../assets/avatars/sea-lion.png" alt="Sea Lion"></div>
+        <div style="display: flex; align-items: center; gap: 18px; padding: 15px;">
+            <div id="avatarPicker">
+                <img id="currentAvatar" src="../assets/avatars/bear.png" alt="Avatar">
+                <div id="avatarOptions">
+                    <div class="avatar-option" data-avatar="bear.png"><img src="../assets/avatars/bear.png" alt="Bear"></div>
+                    <div class="avatar-option" data-avatar="cat.png"><img src="../assets/avatars/cat.png" alt="Cat"></div>
+                    <div class="avatar-option" data-avatar="chicken.png"><img src="../assets/avatars/chicken.png" alt="Chicken"></div>
+                    <div class="avatar-option" data-avatar="cow.png"><img src="../assets/avatars/cow.png" alt="Cow"></div>
+                    <div class="avatar-option" data-avatar="dog.png"><img src="../assets/avatars/dog.png" alt="Dog"></div>
+                    <div class="avatar-option" data-avatar="dragon.png"><img src="../assets/avatars/dragon.png" alt="Dragon"></div>
+                    <div class="avatar-option" data-avatar="giraffe.png"><img src="../assets/avatars/giraffe.png" alt="Giraffe"></div>
+                    <div class="avatar-option" data-avatar="gorilla.png"><img src="../assets/avatars/gorilla.png" alt="Gorilla"></div>
+                    <div class="avatar-option" data-avatar="hippopotamus.png"><img src="../assets/avatars/hippopotamus.png" alt="Hippopotamus"></div>
+                    <div class="avatar-option" data-avatar="koala.png"><img src="../assets/avatars/koala.png" alt="Koala"></div>
+                    <div class="avatar-option" data-avatar="meerkat.png"><img src="../assets/avatars/meerkat.png" alt="Meerkat"></div>
+                    <div class="avatar-option" data-avatar="panda.png"><img src="../assets/avatars/panda.png" alt="Panda"></div>
+                    <div class="avatar-option" data-avatar="penguin.png"><img src="../assets/avatars/penguin.png" alt="Penguin"></div>
+                    <div class="avatar-option" data-avatar="rabbit.png"><img src="../assets/avatars/rabbit.png" alt="Rabbit"></div>
+                    <div class="avatar-option" data-avatar="sea-lion.png"><img src="../assets/avatars/sea-lion.png" alt="Sea Lion"></div>
+                </div>
+            </div>
+            <div id="themePicker">
+                <div id="currentThemeCircle" title="Change Theme">
+                    <div class="theme-grid">
+                        <div class="theme-color theme-primary"></div>
+                        <div class="theme-color theme-secondary"></div>
+                        <div class="theme-color theme-tertiary"></div>
+                        <div class="theme-color theme-accent"></div>
+                    </div>
+                </div>
+                <div id="themeOptions">
+                    <!-- Theme options will be rendered here by JS -->
+                </div>
             </div>
         </div>
     </div>
@@ -578,7 +714,9 @@
         </div>
     </div>
 
-    <script src="popup.js"></script>
+
+
+    <script type="module" src="popup.js"></script>
 </body>
 
 </html>

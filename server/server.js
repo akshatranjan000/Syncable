@@ -1,7 +1,15 @@
 const { hostname } = require('os');
+const http = require('http');
 const WebSocket = require('ws');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const server = http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('OK');
+});
+
+const wss = new WebSocket.Server({ server });
+
+server.listen(8080);
 
 const rooms = new Map();
 

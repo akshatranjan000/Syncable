@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/akshatranjan000/Syncable#readme",
   "dependencies": {
+    "flyctl": "^1.2.6",
     "ws": "^8.18.3"
   }
 }

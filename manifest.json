@@ -9,6 +9,7 @@
             "js": ["content.js"]
         }
     ],    
+    "type": "module",
     "permissions": [
         "storage",
         "tabs",

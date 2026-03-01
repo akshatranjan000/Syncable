@@ -409,3 +409,101 @@ chatNotch.addEventListener('click', function() {
         chatExpanded = true;
     }
 });
+
+// THEME PICKER LOGIC
+import { theme as themeData } from '../assets/theme.js';
+let selectedTheme = 'dark';
+
+function applyTheme(themeName) {
+    const t = themeData[themeName];
+    if (!t) return;
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', t.primary);
+    root.style.setProperty('--color-secondary', t.secondary);
+    root.style.setProperty('--color-tertiary', t.tertiary);
+    root.style.setProperty('--color-accent', t.accent);
+    root.style.setProperty('--color-text', t.text);
+    root.style.setProperty('--color-icon', t.icon);
+}
+const currentThemeCircle = document.getElementById('currentThemeCircle');
+const themeOptions = document.getElementById('themeOptions');
+
+function updateThemeCircle(themeName) {
+    const theme = themeData[themeName];
+    if (!theme) return;
+    const grid = currentThemeCircle.querySelector('.theme-grid');
+    if (grid) {
+        grid.children[0].style.background = theme.primary;
+        grid.children[1].style.background = theme.secondary;
+        grid.children[2].style.background = theme.tertiary;
+        grid.children[3].style.background = theme.accent;
+    }
+}
+
+function renderThemeOptions() {
+    themeOptions.innerHTML = '';
+    Object.keys(themeData).forEach(themeName => {
+        const theme = themeData[themeName];
+        const wrapper = document.createElement('div');
+        wrapper.className = 'theme-option-wrapper';
+        const option = document.createElement('div');
+        option.className = 'theme-option' + (themeName === selectedTheme ? ' selected' : '');
+        option.title = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+        const grid = document.createElement('div');
+        grid.className = 'theme-grid';
+        ['primary','secondary','tertiary','accent'].forEach(key => {
+            const color = document.createElement('div');
+            color.className = `theme-color theme-${key}`;
+            color.style.background = theme[key];
+            grid.appendChild(color);
+        });
+        option.appendChild(grid);
+        const label = document.createElement('span');
+        label.className = 'theme-option-label';
+        label.textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+        wrapper.appendChild(option);
+        wrapper.appendChild(label);
+        wrapper.addEventListener('click', () => {
+            selectedTheme = themeName;
+            applyTheme(selectedTheme);
+            updateThemeCircle(selectedTheme);
+            renderThemeOptions();
+            themeOptions.classList.remove('show');
+            if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+                chrome.storage.local.set({ userTheme: selectedTheme, userThemeSet: true });
+            }
+        });
+        themeOptions.appendChild(wrapper);
+    });
+}
+
+if (currentThemeCircle) {
+    applyTheme(selectedTheme);
+    updateThemeCircle(selectedTheme);
+    currentThemeCircle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        themeOptions.classList.toggle('show');
+        renderThemeOptions();
+    });
+}
+document.addEventListener('click', function(e) {
+    if (themeOptions && !themeOptions.contains(e.target) && !currentThemeCircle.contains(e.target)) {
+        themeOptions.classList.remove('show');
+    }
+});
+// Load saved theme (reset to dark if no explicit user selection exists)
+if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.get(['userTheme', 'userThemeSet'], (result) => {
+        if (result.userThemeSet && result.userTheme && themeData[result.userTheme]) {
+            selectedTheme = result.userTheme;
+        } else {
+            selectedTheme = 'dark';
+            chrome.storage.local.set({ userTheme: 'dark', userThemeSet: false });
+        }
+        applyTheme(selectedTheme);
+        updateThemeCircle(selectedTheme);
+    });
+} else {
+    applyTheme(selectedTheme);
+    updateThemeCircle(selectedTheme);
+}
