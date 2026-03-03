@@ -90,12 +90,30 @@ function renderAvatars(users) {
     avatarList.classList.add('show');
 }
 
-// Check if room already exists
+// Check if room already exists and restore UI state
 if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     chrome.storage.local.get(['roomId'], (result) => {
         if (result.roomId) {
-            roomInput.value = result.roomId;
-            createRoomBtn.disabled = true;
+            const savedRoomId = result.roomId;
+
+            // Restore in-room UI
+            const roomIdDisplay = document.getElementById('roomIdDisplay');
+            const roomIdText = document.getElementById('roomIdText');
+            roomIdText.textContent = savedRoomId;
+            roomIdDisplay.classList.add('show');
+
+            // Hide create/join buttons, show leave button
+            createRoomBtn.style.display = 'none';
+            joinBtn.style.display = 'none';
+            joinBtn.classList.add('hidden');
+            roomInput.style.display = 'none';
+            backBtn.style.display = 'none';
+            leaveBtn.style.display = 'block';
+
+            joinButtonState = 'joined';
+
+            // Show avatar for current user
+            renderAvatars([{ name: 'You', avatar: selectedAvatar }]);
         }
     });
 }
@@ -245,10 +263,7 @@ joinBtn.addEventListener('click', function() {
         joinBtnText.textContent = 'Join Room';
         joinLogoutIcon.style.display = 'none';
         joinBtn.classList.remove('exit-mode');
-        joinButtonState = 'initial';
-        
-        joinButtonState = 'initial';
-        
+        joinButtonState = 'initial';        
         if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
             chrome.storage.local.remove('roomId', () => {
                 console.log('Room exited');

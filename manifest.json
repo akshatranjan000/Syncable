@@ -22,8 +22,8 @@
     "commands": {
         "toggle-sidepanel": {
             "suggested_key": {
-                "default": "Ctrl+Shift+V",
-                "mac": "Command+Shift+V"
+                "default": "Alt+C",
+                "mac": "Option+C"
             },
             "description": "Toggle SyncExt side panel"
         }
@@ -32,7 +32,7 @@
         "default_path": "popup/popup.html"
     },
     "action": {
-        "default_title": "Open SyncExt Side Panel (Ctrl+Shift+V)"
+        "default_title": "Open SyncExt Side Panel (Alt+C)"
     },
     "web_accessible_resources": [
         {

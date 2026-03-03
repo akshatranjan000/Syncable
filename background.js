@@ -1,5 +1,6 @@
 let socket = null;
 let roomId = null;
+let sidePanelOpen = false;
 
 chrome.storage.local.onChanged.addListener(
     async (changes) => {
@@ -21,17 +22,27 @@ chrome.storage.local.onChanged.addListener(
     }
 );
 
+
+
 // Open side panel when extension icon is clicked
 chrome.action.onClicked.addListener((tab) => {
     chrome.sidePanel.open({ windowId: tab.windowId });
+    sidePanelOpen = true;
 });
 
 // Handle keyboard shortcut
 chrome.commands.onCommand.addListener((command) => {
     if (command === 'toggle-sidepanel') {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
             if (tabs[0]) {
-                chrome.sidePanel.open({ windowId: tabs[0].windowId });
+                if(sidePanelOpen) {
+                    await chrome.sidePanel.close({ windowId: tabs[0].windowId });
+                    sidePanelOpen = false;
+                }
+                else {
+                    await chrome.sidePanel.open({ windowId: tabs[0].windowId });
+                    sidePanelOpen = true;
+                }
             }
         });
     }
@@ -42,7 +53,7 @@ function initializeSocket() {
         socket.close();
     }
 
-    socket = new WebSocket('wss//sync-server-old-violet-1509.fly.dev');
+    socket = new WebSocket('wss://sync-server-old-violet-1509.fly.dev');
 
     socket.onopen = () => {
         console.log('WebSocket connection established');
