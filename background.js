@@ -72,7 +72,7 @@ function initializeSocket() {
     };
 }
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message) => {
     // Handle room join/exit messages from popup
     if (message.type === 'joinRoom') {
         roomId = message.roomId;
