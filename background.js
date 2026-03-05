@@ -1,6 +1,7 @@
 let socket = null;
 let roomId = null;
 let sidePanelOpen = false;
+let socketPingInterval = null;
 
 chrome.storage.local.onChanged.addListener(
     async (changes) => {
@@ -52,6 +53,11 @@ function initializeSocket() {
     if (socket) {
         socket.close();
     }
+    
+    // Clear any existing ping interval
+    if (socketPingInterval) {
+        clearInterval(socketPingInterval);
+    }
 
     socket = new WebSocket('wss://sync-server-old-violet-1509.fly.dev');
 
@@ -61,23 +67,67 @@ function initializeSocket() {
             socket.send(JSON.stringify({ type: 'join', roomId }));
             console.log('Joined room:', roomId);
         }
-    }
+        
+        // Start ping interval to prevent disconnection
+        socketPingInterval = setInterval(() => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ type: 'ping' }));
+            }
+        }, 25000); // Ping every 25 seconds (before 30 second timeout)
+    };
 
-    socket.onmessage = (event) => {
+    socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+
+    socket.onclose = (event) => {
+        console.log('WebSocket closed:', event.code, event.reason);
+        if (socketPingInterval) {
+            clearInterval(socketPingInterval);
+        }
+    };
+
+    socket.onmessage = async (event) => {
         const data = JSON.parse(event.data);
 
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, data);
+        if (data.type === 'pong') {
+            console.log('Received pong from server');
+            return;
+        }
+
+        console.log('Forwarding message to extension:', data);
+        
+        // Handle URL navigation from background script
+        if (data.type === 'sync-state' && data.state?.url) {
+            const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tabs[0] && tabs[0].url !== data.state.url) {
+                console.log('Navigating tab to:', data.state.url);
+                await chrome.tabs.update(tabs[0].id, { url: data.state.url });
+                return; // Don't forward sync-state until after navigation completes
+            }
+        }
+        
+        // Send to popup (with fromServer flag)
+        chrome.runtime.sendMessage({ ...data, fromServer: true }).catch(() => {
+            // Popup might not be open, that's okay
         });
+        
+        // Send to content scripts only in active tab to avoid loops
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs[0]) {
+            chrome.tabs.sendMessage(tabs[0].id, data).catch(() => {
+                // Tab might not have content script, that's okay
+            });
+        }
     };
 }
 
 chrome.runtime.onMessage.addListener((message) => {
     // Handle room join/exit messages from popup
     if (message.type === 'joinRoom') {
-        roomId = message.roomId;
-        console.log('Received joinRoom message for:', roomId);
-        initializeSocket();
+        // Store roomId - storage.onChanged listener will handle socket initialization
+        chrome.storage.local.set({ roomId: message.roomId });
+        console.log('Received joinRoom message for:', message.roomId);
         return;
     }
     
@@ -90,7 +140,15 @@ chrome.runtime.onMessage.addListener((message) => {
         }
         return;
     }
-    
+
+    if (message.type === 'chatMessage') {
+        // Forward chat messages to WebSocket
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+        }
+        return;
+    }
+
     // Forward video control messages to WebSocket
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify(message));

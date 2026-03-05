@@ -364,10 +364,21 @@ function sendMessage() {
     const messageText = chatInput.value.trim();
     if (messageText) {
         // Create message element
+        const messageContainer = document.createElement('div');
+        messageContainer.className = 'chat-message-container sent';
+
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message sent';
         messageDiv.textContent = messageText;
-        chatMessages.appendChild(messageDiv);
+        
+        const chatAvatar = document.createElement('img');
+        chatAvatar.src = `../assets/avatars/${selectedAvatar}`;
+        chatAvatar.alt = 'You';
+        chatAvatar.className = 'chat-avatar';
+        
+        messageContainer.appendChild(messageDiv);
+        messageContainer.appendChild(chatAvatar);
+        chatMessages.appendChild(messageContainer);
         
         // Clear input
         chatInput.value = '';
@@ -377,7 +388,42 @@ function sendMessage() {
         
         // Here you would send the message to the server
         console.log('Message sent:', messageText);
+
+        chrome.runtime.sendMessage({
+            type: 'chatMessage',
+            text: messageText,
+            avatar: selectedAvatar
+        });
     }
+}
+
+//Receive message function
+function receiveMessage(text, avatar) {
+    const messageContainer = document.createElement('div');
+    messageContainer.className = 'chat-message-container received';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message received';
+    messageDiv.textContent = text;
+
+    const chatAvatar = document.createElement('img');
+    chatAvatar.src = `../assets/avatars/${avatar}`;
+    chatAvatar.alt = 'User';
+    chatAvatar.className = 'chat-avatar';
+
+    messageContainer.appendChild(chatAvatar);
+    messageContainer.appendChild(messageDiv);
+    chatMessages.appendChild(messageContainer);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+//Display event update in chat
+function displayUpdate(text) {
+    const updateDiv = document.createElement('div');
+    updateDiv.className = 'chat-update';
+    updateDiv.textContent = text;
+    chatMessages.appendChild(updateDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Send button click
@@ -410,6 +456,27 @@ videoCallBtn.addEventListener('click', function() {
         this.style.transform = '';
     }, 200);
     // Here you would initiate a video call
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+    // Only display messages from server, not local content.js messages
+    if (!message.fromServer) return;
+    
+    if (message.type === 'chatMessage') {
+        receiveMessage(message.text, message.avatar);
+    } else if (message.type === 'play') {
+        displayUpdate('Video started playing');
+    } else if (message.type === 'pause') {
+        displayUpdate('Video paused');
+    } else if (message.type === 'seek') {
+        const seekTime = message.state?.time ?? message.currentTime ?? 0;
+        displayUpdate(`Video seeked to ${seekTime.toFixed(2)}s`);
+    } else if (message.type === 'ratechange') {
+        const rate = message.state?.playbackRate ?? message.playbackRate ?? 1;
+        displayUpdate(`Playback rate changed to ${rate}x`);
+    } else if (message.type === 'join') {
+        displayUpdate('A new user has joined the room');
+    }
 });
 
 // Chat notch toggle (optional collapse/expand functionality)

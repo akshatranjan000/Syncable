@@ -48,6 +48,9 @@ function attachListeners() {
     listenersAttached = true;
 }
 
+/*
+* Apply a remote action to the video element, preventing looping conflicts with local actions.
+*/
 function applyRemote(fn) {
     applyingRemoteAction = true;
     try {
@@ -55,28 +58,28 @@ function applyRemote(fn) {
     } finally {
         setTimeout(() => { 
             applyingRemoteAction = false;
-        }, 150);
+        }, 500); // Increased timeout to prevent event loops
     }
 }
 
 /*
 * Listen for messages from the background script to perform actions like syncing state or controlling playback.
 */
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener(async (msg) => {
     if (!video) return;
 
     if(msg.type === 'sync-state' && msg.state) {
-        const { url, time, isPlaying, playbackRate } = msg.state;
-
-        if( window.location.href !== url ) {
-            console.log('Syncing video URL to:', url);
-            window.location.href = url;
-            return;
-        }
-
+        const { time, isPlaying, playbackRate } = msg.state;
+        console.log('Received sync-state message:', msg.state);
+        
+        // URL navigation is handled by background.js
         applyRemote(() => {
-            if (typeof time === 'number') video.currentTime = time;
-            if (typeof playbackRate === 'number') video.playbackRate = playbackRate;
+            if (typeof time === 'number') {
+                video.currentTime = time;
+            }
+            if (typeof playbackRate === 'number') {
+                video.playbackRate = playbackRate;
+            }
             isPlaying ? video.play() : video.pause();
         });
         return;
@@ -84,21 +87,33 @@ chrome.runtime.onMessage.addListener((msg) => {
     
     applyRemote(() => {
         if (msg.type === 'play') {
-            console.log('Received play command');
+            console.log('Received play command', msg.state);
+            // Sync time from state if available
+            if (msg.state?.time !== undefined) {
+                video.currentTime = msg.state.time;
+            }
+            if (msg.state?.playbackRate !== undefined) {
+                video.playbackRate = msg.state.playbackRate;
+            }
             video.play();
         } else if (msg.type === 'pause') {
-            console.log('Received pause command');
+            console.log('Received pause command', msg.state);
+            // Sync time from state if available
+            if (msg.state?.time !== undefined) {
+                video.currentTime = msg.state.time;
+            }
             video.pause();
         } else if (msg.type === 'seek') {
-            const targetTime = msg.currentTime ?? msg.time;
+            const targetTime = msg.state?.time ?? msg.currentTime ?? msg.time;
             console.log('Received seek command to:', targetTime);
             if (typeof targetTime === 'number') {
                 video.currentTime = targetTime;
             }
         } else if (msg.type === 'ratechange') {
-            console.log('Received rate change command to:', msg.playbackRate);
-            if (typeof msg.playbackRate === 'number') {
-                video.playbackRate = msg.playbackRate;
+            const targetRate = msg.state?.playbackRate ?? msg.playbackRate;
+            console.log('Received rate change command to:', targetRate);
+            if (typeof targetRate === 'number') {
+                video.playbackRate = targetRate;
             }
         } else {
             console.warn('Received unknown message type:', msg.type);
